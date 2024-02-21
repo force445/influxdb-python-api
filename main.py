@@ -17,11 +17,11 @@ url = THINGSBOARD_URL
 username = THINGSBOARD_USERNAME
 password = THINGSBOARD_PASSWORD
 
-def main():
-    rest_client = RestClientCE(url)
+rest_client = RestClientCE(url)
+rest_client.login(username=username, password=password)
+def fetch_device():
 
     try:
-        rest_client.login(username=username, password=password)
         res = rest_client.get_tenant_device_infos(page_size=10, page=0)
 
         logging.info("Device info:\n%r", res)
@@ -30,5 +30,16 @@ def main():
         logging.exception(e)
 
 
+def manage_device():
+
+    try:
+        device = Device(name="Test Device", type="default", label="Test Device")
+        res = rest_client.save_device(device)
+
+        logging.info("Device info:\n%r", res)
+
+    except ApiException as e:
+        logging.exception(e)
+
 if __name__ == '__main__':
-    main()
+    fetch_device()
