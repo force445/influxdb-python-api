@@ -1,6 +1,5 @@
 import psycopg2
 
-from config import POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT
 
 class Posgres():
     def __init__(self, POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT):
@@ -24,31 +23,9 @@ class Posgres():
         except Exception as e:
             raise Exception(f"Connection to PostgreSQL DB failed: {e}")
 
-    def create_table(self):
-        try:
-            create_table_query = '''
-            CREATE TABLE IoT_Controller (
-            ID INT PRIMARY KEY NOT NULL,
-            NAME TEXT NOT NULL,
-            DevEUI CHAR(100) NOT NULL,
-            Device_Address CHAR(100),
-            Network_Session_Key CHAR(100),
-            Application_Session_Key CHAR(100),
-            Serial_Number CHAR(100),
-            Model CHAR(10),
-            Class CHAR(10),
-            Measurement CHAR(50)
-            );'''
-            self.cursor.execute(create_table_query)
-            self.connection.commit()
-            print("Table created successfully in PostgreSQL ")
-
-        except Exception as e:
-            raise Exception(f"Table creation failed: {e}")
-    
     def add_column(self):
         try:
-            add_column_query = '''ALTER TABLE Environment_Monitoring_Sensor ADD COLUMN App_ID CHAR(100);'''
+            add_column_query = '''ALTER TABLE sound_level_sensor ADD COLUMN App_ID CHAR(100);'''
             self.cursor.execute(add_column_query)
             self.connection.commit()
             print("Table created successfully in PostgreSQL ")
@@ -56,20 +33,111 @@ class Posgres():
         except Exception as e:
             raise Exception(f"Table creation failed: {e}")
 
-    def select_device(self):
+    def select_device_env_monitoring(self):
         try:
-            select_query = '''SELECT * FROM IoT_Controller'''
+            select_query = '''SELECT * FROM Environment_Monitoring_Sensor;'''
             self.cursor.execute(select_query)
-            self.connection.commit()
-            print("Table created successfully in PostgreSQL ")
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+            
+            cleaned_data = {key: value.strip() for key, value in data.items()}
 
         except Exception as e:
             raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+        
+    def select_device_pir(self):
+        try:
+            select_query = '''SELECT * FROM PIR;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
 
 
+            cleaned_data = {key: value.strip() for key, value in data.items()}
 
-print(POSGRES_DB, POSGRES_HOST, POSGRES_PASSWORD, POSGRES_PORT, POSGRES_USER)
-posgres = Posgres(POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT)
-# posgres.create_table()
-# posgres.add_column()
-posgres.select_device()
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+    
+    def select_device_sound_level(self):
+        try:
+            select_query = '''SELECT * FROM Sound_Level_Sensor;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+
+            cleaned_data = {key: value.strip() for key, value in data.items()}
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+        
+    def select_device_magnetic(self):
+        try:
+            select_query = '''SELECT * FROM Magnetic_Contract_Switch;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+
+            cleaned_data = {key: value.strip() for key, value in data.items()}
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+        
+    def select_device_smart_button(self):
+        try:
+            select_query = '''SELECT * FROM Smart_Button;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+
+            cleaned_data = {key: value.strip() for key, value in data.items()}
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+
+        
+    def select_device_portable_socket(self):
+        try:
+            select_query = '''SELECT * FROM Portable_Socket;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+
+
+            cleaned_data = {key: value.strip() for key, value in data.items()}
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
+        
+        
+    def select_device_iot_controller(self):
+        try:
+            select_query = '''SELECT * FROM IoT_Controller;'''
+            self.cursor.execute(select_query)
+            records = self.cursor.fetchall()
+            for row in records:
+                data = {'name': row[1], 'deveui': row[2], 'device_address': row[3], 'app_id': row[10]}
+
+            cleaned_data = {key: value.strip() for key, value in data.items()}
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
+        
+        return cleaned_data
