@@ -2,11 +2,11 @@ import logging
 
 from dotenv import load_dotenv
 from tb_rest_client.rest_client_ce import *
+from tb_rest_client.api.api_ce.widget_type_controller_api import WidgetTypeControllerApi
 from tb_rest_client.rest import ApiException
 
 from config import THINGSBOARD_URL, THINGSBOARD_USERNAME, THINGSBOARD_PASSWORD
 
-load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
