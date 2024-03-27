@@ -22,6 +22,20 @@ class Posgres():
 
         except Exception as e:
             raise Exception(f"Connection to PostgreSQL DB failed: {e}")
+        
+    def create_table(self):
+        try:
+            create_table_query = '''CREATE TABLE Organization
+                (ID SERIAL PRIMARY KEY,
+                Name CHAR(100) NOT NULL,
+                
+                '''
+            self.cursor.execute(create_table_query)
+            self.connection.commit()
+            print("Table created successfully in PostgreSQL ")
+
+        except Exception as e:
+            raise Exception(f"Table creation failed: {e}")
 
     def add_column(self):
         try:
