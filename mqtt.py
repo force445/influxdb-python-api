@@ -8,11 +8,10 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 
 from posgres import Posgres
 from config import POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT
-from config import INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET
 
 
 class MQTT():
-    def __init__(self, host, port, url, token, org, bucket):
+    def __init__(self, host, port, url, token, org, bucket, url_2, token_2, org_2, bucket_2):
         self.host = host
         self.port = port
         self.posgres = Posgres(POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT)
@@ -21,8 +20,14 @@ class MQTT():
         self.token = token
         self.org = org
         self.bucket = bucket
+        self.url_2 = url_2
+        self.token_2 = token_2
+        self.org_2 = org_2
+        self.bucket_2 = bucket_2
         self.influxclient = InfluxDBClient(url=self.url, token=self.token, org=self.org, timeout=30000)
+        self.influxclient_2 = InfluxDBClient(url=self.url, token=self.token, org=self.org, timeout=30000)
         self.write_api = self.influxclient.write_api(write_options=SYNCHRONOUS)
+        self.write_api_2 = self.influxclient_2.write_api(write_options=SYNCHRONOUS)
         self.client.on_connect = self.on_connect
         self.client.on_subscribe = self.on_subscribe
         self.client.on_message = self.on_message
@@ -116,6 +121,24 @@ class MQTT():
             }
 
             self.write_api.write(self.bucket, self.org, point)
+
+            #publish to node-red
+            # point = {
+            #     "measurement": "env_monitoring",
+            #     "tags": {
+            #         "deviceName":raw_message["deviceInfo"]["deviceName"],
+            #         "devEUI": raw_message["deviceInfo"]["devEui"],
+            #         "deviceClassEnabled": raw_message["deviceInfo"]["deviceClassEnabled"],
+
+            #     },
+            #     "fields": {
+            #         "humidity": raw_message["object"]["humidity"],
+            #         "temperature": raw_message["object"]["temperature"],
+            #     }
+            # }
+
+            # client.publish("env_monitoring", json.dumps(point))
+            # time.sleep(1)
 
         if topic == "application/18ab31a6-9a0d-4a38-a5e3-b3605a9a309f/device/24e124445d186700/event/up":
             if "gpio_out_1" in raw_message["object"]:
@@ -316,6 +339,7 @@ class MQTT():
         # self.client.subscribe("application/2b695811-907e-4e92-b1c7-00d2ca2dc3c7/device/24e124743d015542/event/up")
         # #Iot Controller
         # self.client.subscribe("application/18ab31a6-9a0d-4a38-a5e3-b3605a9a309f/device/24e124445d186700/event/up")
+            
 
     def check_influx_connection(self):
         try:
