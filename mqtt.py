@@ -103,27 +103,45 @@ class MQTT():
         raw_message = json.loads(raw_message)
         topic = message.topic
         
-        #send Env data to InfluxDB
         if topic == "application/0f50f6ff-338d-4dcd-a522-5cfd24f6ffe7/device/24e124136d156431/event/up":
             if not raw_message["object"]:
                 raw_message["object"]["humidity"] = 0
                 raw_message["object"]["temperature"] = 0
 
-            point = {
-                "measurement": "env_monitoring",
-                "tags": {
-                    "deviceName":raw_message["deviceInfo"]["deviceName"],
-                    "devEUI": raw_message["deviceInfo"]["devEui"],
-                    "deviceClassEnabled": raw_message["deviceInfo"]["deviceClassEnabled"],
+                point = {
+                    "measurement": "env_monitoring",
+                    "tags": {
+                        "deviceName":raw_message["deviceInfo"]["deviceName"],
+                        "devEUI": raw_message["deviceInfo"]["devEui"],
+                        "deviceClassEnabled": raw_message["deviceInfo"]["deviceClassEnabled"],
 
-                },
-                "fields": {
-                    "humidity": raw_message["object"]["humidity"],
-                    "temperature": raw_message["object"]["temperature"],
+                    },
+                    "fields": {
+                        "humidity": raw_message["object"]["humidity"],
+                        "temperature": raw_message["object"]["temperature"],
+                    }
                 }
-            }
 
-            self.write_api.write(self.bucket, self.org, point)
+                self.write_api.write(self.bucket, self.org, point)
+                
+            elif "battery" in raw_message["object"]:
+                pass
+            elif "humidity" and "temperature" in raw_message["object"]:
+                point = {
+                    "measurement": "env_monitoring",
+                    "tags": {
+                        "deviceName":raw_message["deviceInfo"]["deviceName"],
+                        "devEUI": raw_message["deviceInfo"]["devEui"],
+                        "deviceClassEnabled": raw_message["deviceInfo"]["deviceClassEnabled"],
+
+                    },
+                    "fields": {
+                        "humidity": raw_message["object"]["humidity"],
+                        "temperature": raw_message["object"]["temperature"],
+                    }
+                }
+
+                self.write_api.write(self.bucket, self.org, point)
 
         if topic == "application/18ab31a6-9a0d-4a38-a5e3-b3605a9a309f/device/24e124445d186700/event/up":
             if "battery" in raw_message["object"]:
@@ -163,7 +181,6 @@ class MQTT():
                 pass
             elif "battery" in raw_message["object"]:
                 pass
-
             else:
                 if raw_message["object"]["state"] == "open":
                     raw_message["object"]["state"] = 1
