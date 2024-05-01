@@ -1,34 +1,8 @@
-import logging
+from mqtt import MQTT
+from config import INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET, INFLUX_URL_2, INFLUX_TOKEN_2, INFLUX_ORG_2, INFLUX_BUCKET_2, POSGRES_HOST, POSGRES_USER, POSGRES_PASSWORD, POSGRES_DB, POSGRES_PORT
 
-from dotenv import load_dotenv
-from tb_rest_client.rest_client_ce import *
-from tb_rest_client.rest import ApiException
-
-from config import THINGSBOARD_URL, THINGSBOARD_USERNAME, THINGSBOARD_PASSWORD
-
-load_dotenv()
-
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
-
-url = THINGSBOARD_URL
-
-username = THINGSBOARD_USERNAME
-password = THINGSBOARD_PASSWORD
-
-def main():
-    rest_client = RestClientCE(url)
-
-    try:
-        rest_client.login(username=username, password=password)
-        res = rest_client.get_tenant_device_infos(page_size=10, page=0)
-
-        logging.info("Device info:\n%r", res)
-
-    except ApiException as e:
-        logging.exception(e)
+from influxdb_client import InfluxDBClient, WritePrecision, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 
-if __name__ == '__main__':
-    main()
+mqtt = MQTT("52.220.91.130", 1883, INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET, INFLUX_URL_2, INFLUX_TOKEN_2, INFLUX_ORG_2, INFLUX_BUCKET_2)
